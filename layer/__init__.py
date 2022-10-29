@@ -97,7 +97,7 @@ class LayerBase(QgsVectorLayer):
             self.addFeature(feat)
 
             if i % 100 == 0:
-                percent = i / float(count) * 100
+                percent = i * 100 // count
                 progress.setValue(percent)
 
         # add features (attributes recalculated if requested)
