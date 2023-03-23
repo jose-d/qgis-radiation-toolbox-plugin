@@ -231,7 +231,7 @@
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
     <DiagramCategory sizeScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" height="15" opacity="1" lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" rotationOffset="270" lineSizeType="MM" backgroundColor="#ffffff" penWidth="0" scaleBasedVisibility="0" diagramOrientation="Up" maxScaleDenominator="1e+08" width="15" backgroundAlpha="255" sizeType="MM" barWidth="5" penAlpha="255" minimumSize="0" enabled="0" minScaleDenominator="0" penColor="#000000">
-      <fontProperties style="tučné" description="Arial,14,-1,5,75,0,0,0,0,0,tučné"/>
+      <fontProperties style="bold" description="Arial,14,-1,5,75,0,0,0,0,0,bold"/>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
   <DiagramLayerSettings showAll="1" placement="0" zIndex="0" linePlacementFlags="18" dist="0" priority="0" obstacle="0">
