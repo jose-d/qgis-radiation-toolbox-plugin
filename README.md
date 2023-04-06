@@ -8,10 +8,11 @@ Currently the RadiationToolbox contains these translations
 
 - Czech / Čeština (Jan Helebrant / Martin Landa)
 - English (Jan Helebrant / Martin Landa)
-- German / Deutsch (draft, Jan Helebrant)
 - French / Français (Louis Bertrand)
+- German / Deutsch (draft, Jan Helebrant)
 - Italian / Italiano (Andrea Serafini)
-
+- Russian / Русский (Jelena Burianová)
+- Ukrainian / Українська (Pavlo Tkachenko)
 
 ## 2023-02-28 Update - plot fixed in Windows OS
 
