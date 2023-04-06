@@ -4,7 +4,8 @@ This plugin allows to easily load data from Safecast radiation monitoring device
 
 ## 2023-04-06 Update - added new language files
 
-- currently the RadiationToolbox contains these translations
+Currently the RadiationToolbox contains these translations
+
 - Czech / Čeština (Jan Helebrant / Martin Landa)
 - English (Jan Helebrant / Martin Landa)
 - German / Deutsch (draft, Jan Helebrant)
