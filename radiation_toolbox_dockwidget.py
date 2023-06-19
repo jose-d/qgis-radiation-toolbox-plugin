@@ -41,7 +41,7 @@ from .layer import LayerType
 from .style import StyleError
 
 try:
-    from .tools.plot.safecast import SafecastPlot
+    from .tools.plot.safecast import MplCanvas
     plotMsg = None
 except ImportError as e:
     plotMsg = "Plot functionality not available. Reason: {}".format(e)
@@ -125,9 +125,9 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.actionDeselect.setEnabled(False)
         self.actionDelete.setEnabled(False)
         self.styleButton.setEnabled(False)
-            
+
         self.toolbarLayout.insertWidget(0, self._mToolbar)
-        
+
         self.actionImport.triggered.connect(self.onLoad)
         self.actionSave.triggered.connect(self.onSave)
         self.actionSelect.triggered.connect(self.onSelect)
@@ -233,7 +233,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self._statsLayout.addItem(self._statsSpacer)
             # set group tile
             self.groupStats.setTitle(self.tr("Statistics"))
-        
+
     def _initPlot(self, plotWidget=False):
         """Initialize plot tab.
 
@@ -246,7 +246,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # create new plot widget
         if not hasattr(self, "_plotWidget") and not plotMsg:
-            self._plotWidget = SafecastPlot(self.groupPlot)
+            self._plotWidget = MplCanvas(self.groupPlot)
             self._plotWidget.setVisible(False)
 
         if not hasattr(self, "_plotLabel"):
@@ -262,7 +262,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self._plotLayout.addItem(self._plotSpacer)
             self._plotVisible = False
             return # initialization done
-        
+
         if plotWidget and not self._plotVisible:
             # remove info label & spacer from layout
             self._plotLabel.setVisible(False)
@@ -368,7 +368,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if fileExt == 'log':
             from .reader.safecast import SafecastReader
             from .layer.safecast import SafecastLayer, SafecastLayerHelper
-            
+
             # create reader for input data
             reader = SafecastReader(filePath)
             # create new QGIS map layer (read-only)
@@ -598,7 +598,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # disable deselect/delete buttons
             self.actionDeselect.setEnabled(False)
             self.actionDelete.setEnabled(False)
-            
+
     def onStorageFormat(self, idx):
         """Storage format changed.
         """
@@ -612,7 +612,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # remember current settings
         sender = '{}-lastChecked'.format(self.sender().objectName())
         self._settings.setValue(sender, checked)
-        
+
     def onAddOnlineMap(self):
         """Add online basemap to layer tree
         """
@@ -714,7 +714,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self._plotVisible:
             groupTitle = self.tr("Layer plot - {}").format(layer.name())
             plotStyle = self.plotStyleCombo.currentIndex()
-            self._plotWidget.update(helper, plotStyle)
+            self._plotWidget.update_graph(helper, plotStyle)
         else:
             groupTitle = self.tr("Plot")
         self.groupPlot.setTitle(groupTitle)
