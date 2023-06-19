@@ -88,7 +88,8 @@ class SafecastLayer(LayerBase):
             'table': 'safecast_metadata',
             'columns': {
                 'format': reader.format_version,
-                'deadtime': reader.deadtime
+                'deadtime': reader.deadtime,
+                'callibration_coefficient': reader.callibration_coefficient
             }
         }
 
@@ -170,7 +171,7 @@ class SafecastLayer(LayerBase):
                 ader = pulse5s * 12
             else:
                 ader = int(item[3]) # cpm
-            ader *= 0.0029940119760479
+            ader *= self.metadata['columns']['callibration_coefficient']
         except ValueError:
             ader = -1
         # workaround: setting up precision causes in QGIS 2
