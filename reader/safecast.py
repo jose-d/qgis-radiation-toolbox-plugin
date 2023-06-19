@@ -30,6 +30,8 @@ class SafecastReader(ReaderBase):
         self.format_version = None
         self.deadtime = None
         self.nlines = 0
+        # default for safecast
+        self.callibration_coefficient = 0.0029940119760479
 
         try:
             super(SafecastReader, self).__init__(filepath)
@@ -70,6 +72,12 @@ class SafecastReader(ReaderBase):
                                       "Unknown deadtime".format(self.filename))
                 else:
                     self.deadtime = line.split('=')[1]
+            elif header_line == 3:
+                device_code = tuple(csv.reader([line]))[0][0]
+                if device_code == '$CZRDD':
+                    # device type is czechrad, change callibration coefficient
+                    self.callibration_coefficient = 0.002395209581
+                    # keep default otherwise
 
         header_line = 0
         self._reset()
@@ -79,6 +87,8 @@ class SafecastReader(ReaderBase):
                 header_line += 1
             if header_line == 3:
                 ReaderLogger.debug("LOG header correct\n")
+                # read one more line to get the device id
+                _read_header_line(next(self._fd), header_line)
                 break
 
         return header_line
