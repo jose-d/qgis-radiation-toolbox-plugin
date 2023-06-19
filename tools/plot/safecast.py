@@ -18,114 +18,158 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 from qgis.PyQt import Qt
-try:
-    from PyQt5 import Qwt
-    hasQwt6 = True
-except ImportError:
-    import qwt as Qwt
-    hasQwt6 = False
 
-class SafecastAxis(Qwt.QwtPlotItem):
-    """Supports a coordinate system similar to 
-    http://en.wikipedia.org/wiki/Image:Cartesian-coordinate-system.svg
+import matplotlib
+matplotlib.use('Qt5Agg')
 
-    Based on http://pyqwt.sourceforge.net/examples/CartesianDemo.py.html
-    """
-
-    def __init__(self, masterAxis, slaveAxis):
-        """Valid input values for masterAxis and slaveAxis are QwtPlot.yLeft,
-        QwtPlot.yRight, QwtPlot.xBottom, and QwtPlot.xTop. When masterAxis is
-        an x-axis, slaveAxis must be an y-axis; and vice versa.
-        """
-        Qwt.QwtPlotItem.__init__(self)
-        self.__axis = masterAxis
-        if masterAxis in (Qwt.QwtPlot.yLeft, Qwt.QwtPlot.yRight):
-            self.setAxes(slaveAxis, masterAxis)
-        else:
-            self.setAxes(masterAxis, slaveAxis)
-        self.scaleDraw = Qwt.QwtScaleDraw()
-        self.scaleDraw.setAlignment((Qwt.QwtScaleDraw.LeftScale,
-                                     Qwt.QwtScaleDraw.RightScale,
-                                     Qwt.QwtScaleDraw.BottomScale,
-                                     Qwt.QwtScaleDraw.TopScale)[masterAxis])
-
-    def draw(self, painter, xMap, yMap, rect):
-        """Draw an axis on the plot canvas
-        """
-        if self.__axis in (Qwt.QwtPlot.yLeft, Qwt.QwtPlot.yRight):
-            self.scaleDraw.move(round(xMap.transform(0.0)), yMap.p2())
-            self.scaleDraw.setLength(yMap.p1()-yMap.p2())
-        elif self.__axis in (Qwt.QwtPlot.xBottom, Qwt.QwtPlot.xTop):
-            self.scaleDraw.move(xMap.p1(), round(yMap.transform(0.0)))
-            self.scaleDraw.setLength(xMap.p2()-xMap.p1())
-        self.scaleDraw.setScaleDiv(self.plot().axisScaleDiv(self.__axis))
-        self.scaleDraw.draw(painter, self.plot().palette())
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
 
 
-class SafecastPlot(Qwt.QwtPlot):
-    """Creates a coordinate system similar system 
-    http://en.wikipedia.org/wiki/Image:Cartesian-coordinate-system.svg
+class MplCanvas(FigureCanvasQTAgg):
 
-    Based on  http://pyqwt.sourceforge.net/examples/CartesianDemo.py.html
-    """
-    def __init__(self, *args):
-        Qwt.QwtPlot.__init__(self, *args)
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot(111)
 
-        # create a plot with a white canvas
-        self.setCanvasBackground(Qt.Qt.white)
+        # variables used throughout the graph
+        self.pressed = False
 
-        # set plot layout
-        self.plotLayout().setCanvasMargin(0)
-        self.plotLayout().setAlignCanvasToScales(True)
-        # attach a grid
-        grid = Qwt.QwtPlotGrid()
-        grid.attach(self)
-        grid.setPen(Qt.QPen(Qt.Qt.black, 0, Qt.Qt.DotLine))
+        super(MplCanvas, self).__init__(fig)
 
-        # attach a x-axis
-        xaxis = SafecastAxis(Qwt.QwtPlot.xBottom, Qwt.QwtPlot.yLeft)
-        xaxis.attach(self)
-        self.setAxisTitle(Qwt.QwtPlot.xBottom, self.tr("Distance (km)"))
+        self.axes.set_xlabel(self.tr("Distance (km)"))
+        self.axes.set_ylabel(self.tr("ADER (microSv/h)"))
 
-        # attach a y-axis
-        yaxis = SafecastAxis(Qwt.QwtPlot.yLeft, Qwt.QwtPlot.xBottom)
-        yaxis.attach(self)
-        self.setAxisTitle(Qwt.QwtPlot.yLeft, self.tr("ADER (microSv/h)"))
+        # zoom event
+        self.mpl_connect('scroll_event', self.zoom)
 
-        # curve
-        self.curve = None
+        # pan events
+        self.mpl_connect('button_press_event', self.onPress)
+        self.mpl_connect('button_release_event', self.onRelease)
+        self.mpl_connect('motion_notify_event', self.onMotion)
 
-    def update(self, layer, style):
+    def update_graph(self, layer, style): # , layer=None, style=None):
         """Update plot for given Safecast layer.
 
         :param layer: Safecast layer
         """
+        if layer is not None:
+            self.layer = layer
         # collect plot coordinates
-        x, y = layer.plotData()
+        x, y = self.layer.plotData()
 
-        # clear plot first & detach curve
-        if hasQwt6:
-            items = Qwt.QwtPlotItem.Rtti_PlotItem
+        self.axes.clear()
+        self.axes.plot(x, y, label=self.layer.filename(), linewidth=0.7)
+        self.axes.grid(color='green', linestyle='--', linewidth=0.3)
+        self.draw()
+
+    def zoom(self, event):
+        """Zoom the image upon scrolling the mouse wheel.
+
+        Scrolling it in the plot zooms the plot. Scrolling above or below the
+        plot scrolls the x axis. Scrolling to the left or the right of the plot
+        scrolls the y axis. Where it is ambiguous nothing happens."""
+        zoom_scale = 1.1
+
+        x = event.x
+        y = event.y
+        xdata = event.xdata
+        ydata = event.ydata
+
+        # convert pixels to axes
+        tranP2A = self.axes.transAxes.inverted().transform
+        # convert axes to data limits
+        tranA2D = self.axes.transLimits.inverted().transform
+        # convert the scale (for log plots)
+        tranSclA2D = self.axes.transScale.inverted().transform
+
+        if event.button == 'down':
+            # deal with zoom in
+            scale_factor = zoom_scale
+        elif event.button == 'up':
+            # deal with zoom out
+            scale_factor = 1 / zoom_scale
         else:
-            items = [Qwt.QwtPlotItem.Rtti_PlotItem]
-        self.detachItems(items, True)
+            # deal with something that should never happen
+            scale_factor = 1
 
-        # attach a curve
-        self.curve = Qwt.QwtPlotCurve('ader_microSvh')
-        self.curve.attach(self)
+        # get my axes position to know where I am with respect to them
+        xa, ya = tranP2A((x, y))
 
-        if style == 0: # lines
-            self.curve.setPen(Qt.QPen(Qt.Qt.blue, 0))
-        else:          # points
-            self.curve.setStyle(Qwt.QwtPlotCurve.NoCurve)
-            self.curve.setSymbol(Qwt.QwtSymbol(Qwt.QwtSymbol.Ellipse,
-                                               Qt.QBrush(Qt.Qt.blue),
-                                               Qt.QPen(Qt.Qt.blue),
-                                               Qt.QSize(5, 5)))
+        # fallback values (should always be defined in the following if clauses)
+        zoomx = False
+        zoomy = False
 
-        self.curve.setSamples(x, y)
+        if (ya < 0):
+            if (xa >= 0 and xa <= 1):
+                zoomx = True
+                zoomy = False
+                xdata = tranSclA2D(tranA2D((0.5, 0.5)))[0]
+        elif (ya <= 1):
+            if (xa < 0):
+                zoomx = False
+                zoomy = True
+                ydata = tranSclA2D(tranA2D((0.5, 0.5)))[1]
+            elif (xa <= 1):
+                zoomx = True
+                zoomy = True
+            else:
+                zoomx = False
+                zoomy = True
+                ydata = tranSclA2D(tranA2D((0.5, 0.5)))[1]
+        else:
+            if (xa >= 0 and xa <= 1):
+                zoomx = True
+                zoomy = False
+                xdata = tranSclA2D(tranA2D((0.5, 0.5)))[0]
 
-        self.replot()
+        # set new limits
+        if zoomx is True:
+            new_xl = xdata - scale_factor * (xdata - self.axes.get_xlim()[0])
+            new_xr = xdata + scale_factor * (self.axes.get_xlim()[1] - xdata)
+            # set limits
+            self.axes.set_xlim([new_xl, new_xr])
+        if zoomy is True:
+            new_yl = ydata - scale_factor * (ydata - self.axes.get_ylim()[0])
+            new_yr = ydata + scale_factor * (self.axes.get_ylim()[1] - ydata)
+            # set limits
+            self.axes.set_ylim([new_yl, new_yr])
+
+        # replot the graph
+        self.draw()
+
+    def onPress(self, event):
+        """Save coordinates of the click."""
+        if event.inaxes != self.axes:
+            return
+
+        self.cur_xlim = self.axes.get_xlim()
+        self.cur_ylim = self.axes.get_ylim()
+
+        self.pressed = True
+        self.xpress = event.xdata
+        self.ypress = event.ydata
+
+    def onRelease(self, event):
+        """Draw the graph."""
+        self.pressed = False
+        self.draw()
+
+    def onMotion(self, event):
+        """Pan the graph."""
+        if self.pressed is False:
+            return
+        if event.inaxes != self.axes:
+            return
+
+        dx = event.xdata - self.xpress
+        dy = event.ydata - self.ypress
+        self.cur_xlim -= dx
+        self.cur_ylim -= dy
+
+        self.axes.set_xlim(self.cur_xlim)
+        self.axes.set_ylim(self.cur_ylim)
+
+        self.draw()
 
