@@ -60,7 +60,14 @@ class MplCanvas(FigureCanvasQTAgg):
         x, y = self.layer.plotData()
 
         self.axes.clear()
-        self.axes.plot(x, y, label=self.layer.filename(), linewidth=0.7)
+
+        plt_kwargs = {'label': self.layer.filename()}
+        if style == 1:  # points
+            plt_kwargs.update({'linestyle': 'None', 'marker': '+'})
+        else:  # lines
+            plt_kwargs.update({'linestyle': 'solid', 'linewidth': 0.7})
+
+        self.axes.plot(x, y, **plt_kwargs)
         self.axes.grid(color='green', linestyle='--', linewidth=0.3)
         self.draw()
 
