@@ -18,4 +18,4 @@ uploading to `Safecast web map <http://safecast.org/tilemap/>`__.
    intro
    installation
    user-manual
-   acknowledgement
+   about
