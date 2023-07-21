@@ -1,5 +1,5 @@
-QGIS Safecast Plugin Documentation
-==================================
+QGIS Radiation Toolbox Plugin Documentation
+===========================================
 
 This plugin allows to easily load data from `Safecast
 <https://en.wikipedia.org/wiki/Safecast_(organization)>`__ radiation
