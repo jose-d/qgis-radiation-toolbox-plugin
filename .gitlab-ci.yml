@@ -17,6 +17,6 @@ pages:
   - (cd help; sphinx-build -b html source public)
   artifacts:
     paths:
-    - public
+    - help/public
   only:
   - master
