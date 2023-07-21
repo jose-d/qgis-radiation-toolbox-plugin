@@ -6,7 +6,7 @@ dose_increment;Double;Increment DOSE
 time_cumulative;String;Cumulative time
 dose_cumulative;Double;Cumulative DOSE
 device;String;Device
-device_id;Int;Device ID
+device_id;String;Device ID
 date_time;String;Datetime
 cpm;Int;CPM
 pulses5s;Int;Pulses 5sec
