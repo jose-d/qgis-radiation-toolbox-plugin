@@ -11,7 +11,7 @@ The user can, if necessary, easily select and remove unwanted parts of
 the measurement set and save the corrected set as a new LOG file for
 uploading to `Safecast web map <http://safecast.org/tilemap/>`__.
 
-Basic and experimental support for for `ERS 2.0 format <https://github.com/juhele/opengeodata/tree/master/ERS_-_European_Radiometric_and_Spectrometry_format>`__ (European Radiometric and Spectrometry format) and some types of `PicoEnvirotec PEI <https://github.com/juhele/opengeodata/tree/master/Ground_radiation_monitoring_DEMO_data>`__ files is also available.
+Basic and experimental support for viewing `ERS 2.0 format <https://github.com/juhele/opengeodata/tree/master/ERS_-_European_Radiometric_and_Spectrometry_format>`__ (European Radiometric and Spectrometry format) and some types of `PicoEnvirotec PEI files <https://github.com/juhele/opengeodata/tree/master/Ground_radiation_monitoring_DEMO_data>`__ is also available.
 
 .. toctree::
    :maxdepth: 2
