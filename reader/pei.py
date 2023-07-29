@@ -96,7 +96,7 @@ class PEIReader(ReaderBase):
         )[0]
         if not dtype.endswith('s') and multiplier:
             value *= multiplier
-        if dtype == 's':
+        if dtype.endswith('s'):
             value = value.decode('utf-8').strip(' ')
 
         return value
