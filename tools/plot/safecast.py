@@ -30,16 +30,13 @@ from matplotlib.figure import Figure
 class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
+        fig = Figure(figsize=(width, height), dpi=dpi, tight_layout=True)
         self.axes = fig.add_subplot(111)
 
         # variables used throughout the graph
         self.pressed = False
 
         super(MplCanvas, self).__init__(fig)
-
-        self.axes.set_xlabel(self.tr("Distance (km)"))
-        self.axes.set_ylabel(self.tr("ADER (microSv/h)"))
 
         # zoom event
         self.mpl_connect('scroll_event', self.zoom)
@@ -69,6 +66,8 @@ class MplCanvas(FigureCanvasQTAgg):
 
         self.axes.plot(x, y, **plt_kwargs)
         self.axes.grid(color='green', linestyle='--', linewidth=0.3)
+        self.axes.set_xlabel(self.tr("Distance (km)"))
+        self.axes.set_ylabel(self.tr("ADER (microSv/h)"))
         self.draw()
 
     def zoom(self, event):
