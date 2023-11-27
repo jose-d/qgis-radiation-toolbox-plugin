@@ -17,7 +17,7 @@ and you can install it:
    
 and the plugin icon appears in the QGIS toolbar:
 
-.. figure:: images/install_006_Safecast_plugin_in_QGIS.png
+.. figure:: images/install_006_RadiationToolbox_plugin_in_QGIS.png
 
    Radiation ToolBox in QGIS toolbar.
 
