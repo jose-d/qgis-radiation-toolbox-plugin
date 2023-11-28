@@ -16,7 +16,7 @@ Load LOG file
 -------------
 
 A Safecast layer (a LOG file) can be loaded from the main toolbar by
-|mLoad| :sup:`Import Log file as new layer`. An input file is loaded
+|mLoad| :sup:`Import radiation data`. An input file is loaded
 into QGIS as a new vector point layer. The name of new layer
 corresponds with the input file (without LOG extension). Measured
 points are categorized based on the dose rate (ADER)
