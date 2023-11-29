@@ -39,7 +39,7 @@ range from 0.08 to 5.00 microSv/h. See the figure below.
 
 .. figure:: images/001_log_data_no_bgr.png
         
-   Loaded Safecast / CzechRad layer with the default style applied.
+   Loaded Safecast layer with the default style applied.
 
 The alternative style (0.05 - 200.00 microSv/h) can be chosen from the
 style selector and activated for a selected layer by `Apply` button.
