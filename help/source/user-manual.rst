@@ -15,7 +15,7 @@ User Manual
 Load LOG file
 -------------
 
-A Safecast layer (a LOG file) can be loaded from the main toolbar by
+A Safecast / CzechRad layer (a LOG file) can be loaded from the main toolbar by
 |mLoad| :sup:`Import radiation data`. An input file is loaded
 into QGIS as a new vector point layer. The name of new layer
 corresponds with the input file (without LOG extension). Measured
@@ -39,7 +39,7 @@ range from 0.08 to 5.00 microSv/h. See the figure below.
 
 .. figure:: images/001_log_data_no_bgr.png
         
-   Loaded Safecast layer with the default style applied.
+   Loaded Safecast / CzechRad layer with the default style applied.
 
 The alternative style (0.05 - 200.00 microSv/h) can be chosen from the
 style selector and activated for a selected layer by `Apply` button.
