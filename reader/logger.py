@@ -12,7 +12,6 @@ from builtins import object
 
 import os
 import logging
-from future.utils import with_metaclass
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = list(range(8))
 
@@ -70,7 +69,7 @@ class ColoredLogger(logging.Logger):
 
         return
 
-class LoggerManager(with_metaclass(Singleton, object)):
+class LoggerManager(metaclass=Singleton):
     _loggers = {}
 
     def __init__(self, *args, **kwargs):
