@@ -6,7 +6,9 @@ This plugin allows to easily load data from Safecast radiation monitoring device
 
 new
 - Polish / Polski (Anna Mrozik)
+
 to be added
+
 - Slovak / Slovenčina
 
 ## 2023-10-02 Update - complete code refresh, upgraded plot window
