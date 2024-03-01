@@ -2,6 +2,12 @@
 
 This plugin allows to easily load data from Safecast radiation monitoring devices (LOG file) like bGeigie Nano into QGIS as a new vector point layer. Experimental support for ERS 2.0 format (European Radiometric and Spectrometry format)(1) and some types of PicoEnvirotec PEI files (2). 
 
+## 2023-10-02 Update - complete code refresh, upgraded plot window
+
+- current version 1.0.1, also available from QGIS plugin managing / installation tool
+- support for CzechRad LOG data format - initial implementation (conversion coefficient to be updated after device callibration)
+- plot window now allows panning and zooming, not dependent on OS or external libraries
+
 ## 2023-04-06 Update - added new language files
 
 Currently the RadiationToolbox contains these translations
