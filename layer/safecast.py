@@ -612,7 +612,7 @@ class SafecastLayerHelper(object):
             self._layer.setReadOnly(True)
 
             # force reload attributes
-            self._layer.dataProvider().forceReload()
+            self._layer.dataProvider().reloadData()
 
             # QgsMessageLog.logMessage(
             #     '{0}: {1} features updated in {2:.2f} sec'.format(
