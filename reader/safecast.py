@@ -76,7 +76,7 @@ class SafecastReader(ReaderBase):
                 device_code = tuple(csv.reader([line]))[0][0]
                 if device_code == '$CZRDD':
                     # device type is czechrad, change callibration coefficient
-                    self.callibration_coefficient = 0.002395209581
+                    self.callibration_coefficient = 0.0030441400304414
                     # keep default otherwise
 
         header_line = 0
