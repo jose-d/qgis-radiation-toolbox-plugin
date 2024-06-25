@@ -74,7 +74,7 @@ class SafecastReader(ReaderBase):
                     self.deadtime = line.split('=')[1]
             elif header_line == 3:
                 device_code = tuple(csv.reader([line]))[0][0]
-                if device_code == '$CZRDD':
+                if device_code == '$CZRA1':
                     # device type is czechrad, change callibration coefficient
                     self.callibration_coefficient = 0.0030441400304414
                     # keep default otherwise
