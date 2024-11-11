@@ -22,18 +22,17 @@ class ERSLayer(LayerBase):
         # style
         self._style = ERSStyle()
 
-    def _item2feat(self, item):
-        """Create QgsFeature from data item.
+    def _rec2feat(self, record):
+        """Create QgsFeature from data record.
         """
         feat = QgsFeature()
 
         # set geometry
-        # PN ... Measurement or sample point coordinate N-S (latitude) Numeric
-        # PE ... Measurement or sample point coordinate E-W (longitude) Numeric
-        point = QgsPointXY(float(item['PE']), float(item['PN']))
-        feat.setGeometry(QgsGeometry.fromPointXY(point))
+        feat.setGeometry(
+            QgsGeometry.fromPointXY(QgsPointXY(*record.point))
+        )
 
         # set attributes
-        feat.setAttributes(list(item.values()))
+        feat.setAttributes(list(record.values()))
 
         return feat

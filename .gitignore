@@ -6,3 +6,4 @@ qgis-safecast-plugin.zip
 qwt/
 zip_build/
 tests/data/sample.sqlite
+radiation_toolbox_reader/

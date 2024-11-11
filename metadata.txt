@@ -2,7 +2,7 @@
 name=Radiation ToolBox Plugin
 qgisMinimumVersion=3.16
 description=Plugin for loading data from Safecast and other radiation monitoring devices
-version=1.1dev
+version=2.0dev
 author=OpenGeoLabs s.r.o.
 email=info@opengeolabs.cz
 

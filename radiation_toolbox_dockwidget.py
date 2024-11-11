@@ -34,8 +34,9 @@ from qgis.utils import iface, Qgis
 
 from osgeo import ogr
 
+from .radiation_toolbox_reader.logger import ReaderLogger
+
 from .layer.exceptions import LoadError
-from .reader.logger import ReaderLogger
 from .tools.stats.safecast import SafecastStats
 from .layer import LayerType
 from .style import StyleError
@@ -366,18 +367,18 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         helper = None
 
         if fileExt == 'log':
-            from .reader.safecast import SafecastReader
+            from .radiation_toolbox_reader.safecast import SafecastReader
             from .layer.safecast import SafecastLayer, SafecastLayerHelper
 
             # create reader for input data
-            reader = SafecastReader(filePath)
+            reader = SafecastReader(filePath, computed_attributes=True)
             # create new QGIS map layer (read-only)
             layer = SafecastLayer(filePath, storageFormat)
             # register new layer in plugin's internal list
             # helper must be assigned before loading data (!)
             self._layers[layer.id()] = helper = SafecastLayerHelper(layer)
         elif fileExt == 'ers':
-            from .reader.ers import ERSReader
+            from .radiation_toolbox_reader.ers import ERSReader
             from .layer.ers import ERSLayer
 
             # create reader for input data
@@ -385,7 +386,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # create new QGIS map layer (read-only)
             layer = ERSLayer(filePath, storageFormat)
         elif fileExt in ('pei', 'p46'):
-            from .reader.pei import PEIReader
+            from .radiation_toolbox_reader.pei import PEIReader
             from .layer.pei import PEILayer
 
             # create reader for input data
@@ -403,7 +404,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # load data by reader into new layer
             layer.load(reader)
             if helper:
-                helper.recalculateAttributes()
+                helper.computeStatsPlot()
             # set style
             # must be called after each loading since file extension can change
             self._initStyles(layer)
@@ -590,7 +591,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 layer.setReadOnly(True)
 
                 self._layers[layer.id()].recalculateAttributes()
-                # self.actionUpdateStatsPlot.trigger()
+                self.actionUpdateStatsPlot.trigger()
         else:
             # inform user - no features selected, nothing to be deleted
             iface.messageBar().pushMessage(self.tr("Info"), self.tr("No features selected. Nothing to be deleled."),
@@ -677,7 +678,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if not helper:
             return
 
-        stats = helper.stats()
+        stats = helper.statsData()
         data = [(self.tr("Measured points"), "{0:d}".format(stats['count']))]
         if stats['count'] <= 0:
             self._statsWidget.clear()
@@ -748,7 +749,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if not isinstance(layer, SafecastLayer) and self._getLayerType(layer) == LayerType.Safecast:
             from layer.safecast import SafecastLayerHelper
             helper = SafecastLayerHelper(layer)
-            helper.computeStats()
+            helper.computeStatsPlot()
             self._layers[layer.id()] = helper
 
         self.updateStats(layer)

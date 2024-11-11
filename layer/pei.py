@@ -18,17 +18,18 @@ class PEILayer(LayerBase):
         # style
         self._style = PEIStyle()
 
-    def _item2feat(self, item):
-        """Create QgsFeature from data item.
+    def _rec2feat(self, record):
+        """Create QgsFeature from data record.
         """
         feat = QgsFeature()
 
         # set geometry
-        point = QgsPointXY(float(item['Lon']), float(item['Lat']))
-        feat.setGeometry(QgsGeometry.fromPointXY(point))
+        feat.setGeometry(
+            QgsGeometry.fromPointXY(QgsPointXY(*record.point))
+        )
 
         # set attributes
-        feat.setAttributes(list(item.values()))
+        feat.setAttributes(list(record.values()))
 
         return feat
 
@@ -49,9 +50,10 @@ class PEILayer(LayerBase):
     def load(self, reader):
         super(PEILayer, self).load(reader)
 
-        with open(self._attributesCSVFile()) as fd:
-            fields = list(map(lambda x: x.lower(), fd.read().splitlines()))
-            self._setShownFields(fields)
+        # to be fixed
+        # with open(self._attributesCSVFile()) as fd:
+        #     fields = list(map(lambda x: x.lower(), fd.read().splitlines()))
+        #     self._setShownFields(fields)
 
     def formatType(self):
         field_names = [field.name().lower() for field in self.fields()]
