@@ -8,7 +8,7 @@ script_dir=$(realpath $(dirname $0))
 ### install released SMODERP2D version
 # pip3 install radiation-toolbox-reader
 ### or from git
-(cd ${script_dir}/../../radiation-toolbox-reader ;pip3 install . gdal==3.9.3)
+(cd ${script_dir}/../../radiation-toolbox-reader ;pip3 install .)
 
 pv=$(python3 -V | cut -d' ' -f 2 | cut -d'.' -f 1,2)
 LIB=$VENV/lib/python$pv/site-packages
