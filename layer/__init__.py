@@ -156,7 +156,7 @@ class LayerBase(QgsVectorLayer):
     def _writeToOgrDataSource(self):
         filePath = Path(self._fileName).with_suffix('.' + self.storageFormat.lower())
         try:
-            self.reader.export(filePath, self.storageFormat)
+            self.reader.export(filePath, self.storageFormat, overwrite=True)
         except ReaderExportError as e:
             raise LoadError(
                 self.tr("Unable to create SQLite datasource: {}").format(e)

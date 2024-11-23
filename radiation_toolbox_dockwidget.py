@@ -367,11 +367,12 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         helper = None
 
         if fileExt == 'log':
+            from .radiation_toolbox_reader import ComputedAttributes
             from .radiation_toolbox_reader.safecast import SafecastReader
             from .layer.safecast import SafecastLayer, SafecastLayerHelper
 
             # create reader for input data
-            reader = SafecastReader(filePath, computed_attributes=True)
+            reader = SafecastReader(filePath, computed_attributes=ComputedAttributes.All)
             # create new QGIS map layer (read-only)
             layer = SafecastLayer(filePath, storageFormat)
             # register new layer in plugin's internal list

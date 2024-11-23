@@ -39,6 +39,7 @@ from .exceptions import LoadError
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from style.safecast import SafecastStyle
 
+from radiation_toolbox_reader import ComputedAttributes
 from radiation_toolbox_reader.safecast import SafecastRecord
 
 class SafecastWriterError(Exception):
@@ -206,7 +207,7 @@ class SafecastLayerHelper(object):
         columns = []
         blacklist = ['checksum']
         for name, meta in self._layer.reader.attributeDefs().items():
-            if meta['computed'] < 1 and name not in blacklist:
+            if meta['computed'].value < ComputedAttributes.PerRecordOnly.value and name not in blacklist:
                 columns.append(name)
         try:
             with open(filePath, 'w', newline='\r\n') as f:
@@ -262,7 +263,7 @@ class SafecastLayerHelper(object):
         # collect attributes to be recomputed
         field_idx = {}
         for name, meta in self._layer.reader.attributeDefs().items():
-            if meta['computed'] > 1:
+            if meta['computed'].value > ComputedAttributes.PerRecordOnly.value:
                 field_idx[name] = self._layer.dataProvider().fieldNameIndex(name)
 
         # update reader records based on QGIS features
