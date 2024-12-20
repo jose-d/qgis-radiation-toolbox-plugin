@@ -34,7 +34,7 @@ Currently the RadiationToolbox contains these translations
 - implemented fix provided by Petr Klosko (Twitter: @pklosko) usable only in Windows OS (in linux the plot works without need to fix anything)
 - get the plugin from the fixed branch (Windows only, the fix causes errors in linux):
 
-https://gitlab.com/opengeolabs/qgis-radiation-toolbox-plugin/-/tree/Windows_fix
+https://gitlab.com/opengeolabs/radiation-toolbox/qgis-radiation-toolbox-plugin/-/tree/Windows_fix
 
 
 Features:

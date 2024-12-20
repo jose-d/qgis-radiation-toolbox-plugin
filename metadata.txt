@@ -8,8 +8,8 @@ email=info@opengeolabs.cz
 
 about=This plugin allows to easily load data from Safecast radiation monitoring devices (LOG file) like bGeigie Nano into QGIS as a new vector point layer. Experimental support for ERS 2.0 format (European Radiometric and Spectrometry format) and some types of PicoEnvirotec PEI files. Developed by OpenGeoLabs s.r.o for National Radiation Protection Institute (SURO), Prague, Czech Republic (SURO).
 
-tracker=https://gitlab.com/opengeolabs/qgis-radiation-toolbox-plugin/-/issues
-repository=https://gitlab.com/opengeolabs/qgis-radiation-toolbox-plugin
+tracker=https://gitlab.com/opengeolabs/radiation-toolbox/qgis-radiation-toolbox-plugin/-/issues
+repository=https://gitlab.com/opengeolabs/radiation-toolbox/qgis-radiation-toolbox-plugin
 
 tags=vector,radiation,safecast,radioactivity,nuclear
 
