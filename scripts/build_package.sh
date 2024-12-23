@@ -1,14 +1,11 @@
-#!/bin/bash -e
+#!/bin/sh -e
 
 VENV=/tmp/radiation_toolbox_plugin
 python3 -m venv $VENV
 source $VENV/bin/activate
 
 script_dir=$(realpath $(dirname $0))
-### install released SMODERP2D version
-# pip3 install radiation-toolbox-reader
-### or from git
-(cd ${script_dir}/../../radiation-toolbox-reader ;pip3 install .)
+pip3 install -r $script_dir/../requirements.txt
 
 pv=$(python3 -V | cut -d' ' -f 2 | cut -d'.' -f 1,2)
 LIB=$VENV/lib/python$pv/site-packages

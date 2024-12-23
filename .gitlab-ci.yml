@@ -1,22 +1,32 @@
-image: python:3.11-alpine
+image: python:3.13-alpine
 
-test:
+build_pages:
   stage: test
   script:
-  - pip install -U sphinx
+  - pip install sphinx
   - (cd help; sphinx-build -b html source ../public)
   only:
   - branches
   except:
   - master
 
-pages:
+deploy_pages:
   stage: deploy
   script:
-  - pip install -U sphinx
+  - pip install sphinx
   - (cd help; sphinx-build -b html source ../public)
   artifacts:
     paths:
     - public
   only:
   - master
+
+deploy_package:
+  stage: deploy
+  script:
+  - apk add proj proj-dev proj-util gcc musl-dev tzdata gdal gdal-dev g++ git make zip
+  - pip install sphinx pb_tool setuptools
+  - ./scripts/build_package.sh
+  artifacts:
+    paths:
+      - zip_build/radiation_toolbox_plugin.zip
