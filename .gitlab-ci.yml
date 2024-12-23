@@ -10,7 +10,7 @@ build_pages:
   except:
   - master
 
-deploy_pages:
+pages:
   stage: deploy
   script:
   - pip install sphinx
@@ -21,7 +21,7 @@ deploy_pages:
   only:
   - master
 
-deploy_package:
+package:
   stage: deploy
   script:
   - apk add proj proj-dev proj-util gcc musl-dev tzdata gdal gdal-dev g++ git make zip
