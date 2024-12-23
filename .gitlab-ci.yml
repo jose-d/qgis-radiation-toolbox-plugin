@@ -27,6 +27,8 @@ package:
   - apk add proj proj-dev proj-util gcc musl-dev tzdata gdal gdal-dev g++ git make zip
   - pip install sphinx pb_tool setuptools
   - ./scripts/build_package.sh
+  - cp -r zip_build/radiation_toolbox_plugin .
   artifacts:
+    name: radiation_toolbox_plugin
     paths:
-      - zip_build/radiation_toolbox_plugin.zip
+      - radiation_toolbox_plugin
