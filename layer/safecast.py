@@ -48,6 +48,15 @@ class SafecastWriterError(Exception):
     pass
 
 class SafecastLayer(LayerBase):
+    fieldOrder = [
+        'ogc_fid', 'ader_microsvh', 'time_local', 'speed_kmph',
+        'dose_increment', 'time_cumulative', 'dose_cumulative', 'dist_cumulative',
+        'device', 'device_id', 'date_time', 'cpm', 'pulses5s',
+        'pulses_total', 'validity', 'lat_deg', 'hemisphere',
+        'long_deg', 'east_west', 'altitude', 'gps_validity',
+        'sat', 'hdop', 'checksum'
+    ]
+
     def __init__(self, fileName, storageFormat):
         """Safecast memory-based read-only layer.
 

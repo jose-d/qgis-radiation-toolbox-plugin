@@ -425,6 +425,9 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # zoom to the new layer (already selected)
         iface.zoomToActiveLayer()
 
+        # adjust field order
+        layer.setFieldOrder()
+
         # remember directory path / file extension
         self._settings.setValue(senderPath, os.path.dirname(filePath))
         self._settings.setValue(senderExt, fileExt)

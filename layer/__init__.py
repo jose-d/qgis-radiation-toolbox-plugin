@@ -34,6 +34,8 @@ class LayerBase(QgsVectorLayer):
         :param fileName: path to input file
         :param storageFormat: storage format for layer (Memory or SQLite)
     """
+    fieldOrder = None
+
     def __init__(self, fileName, storageFormat):
         self._fileName = fileName
         self._layerName = os.path.splitext(os.path.basename(self._fileName))[0]
@@ -268,3 +270,19 @@ class LayerBase(QgsVectorLayer):
         :return: style class
         """
         return self._style
+
+    def setFieldOrder(self):
+        """Set field order in attribute table.
+        """
+        if self.fieldOrder is None:
+            return
+
+        config = self.attributeTableConfig()
+        columnsConfig = config.columns()
+
+        columnsNewOrderDict = {column: self.fieldOrder.index(column.name) for column in columnsConfig if
+                               column.type == 0 and column.name in self.fieldOrder}
+        columnsNewOrderList = sorted(columnsNewOrderDict, key=columnsNewOrderDict.get, reverse=False)
+
+        config.setColumns(columnsNewOrderList)
+        self.setAttributeTableConfig(config)
