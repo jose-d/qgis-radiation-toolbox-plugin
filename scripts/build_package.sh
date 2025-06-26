@@ -21,7 +21,7 @@ find $plugin_dir/radiation_toolbox_reader -name __pycache__ | xargs rm -rf
 find $plugin_dir/ -name __pycache__ | xargs rm -rf
 
 # pb_tool zip
-(cd zip_build; zip -r $plugin_name.zip $plugin_name) # pb_tool zip will overwrite python package
+(cd zip_build; rm $plugin_name.zip ; zip -r $plugin_name.zip $plugin_name) # pb_tool zip will overwrite python package
 
 deactivate
 rm -rf $VENV
