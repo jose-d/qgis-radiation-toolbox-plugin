@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 VENV=/tmp/radiation_toolbox_plugin
 python3 -m venv $VENV
