@@ -2,7 +2,7 @@
 name=Radiation ToolBox Plugin
 qgisMinimumVersion=3.16
 description=Plugin for loading data from Safecast and other radiation monitoring devices
-version=2.0dev
+version=2.1dev
 author=OpenGeoLabs s.r.o.
 email=info@opengeolabs.cz
 
@@ -13,7 +13,7 @@ repository=https://gitlab.com/opengeolabs/radiation-toolbox/qgis-radiation-toolb
 
 tags=vector,radiation,safecast,radioactivity,nuclear
 
-homepage=https://opengeolabs.gitlab.io/qgis-radiation-toolbox-plugin/
+homepage=https://opengeolabs.gitlab.io/radiation-toolbox/qgis-radiation-toolbox-plugin/
 category=Plugins
 icon=icons/radiation_toolbox_icon.png
 experimental=True
