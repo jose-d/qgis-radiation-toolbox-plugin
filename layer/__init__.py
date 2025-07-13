@@ -155,6 +155,9 @@ class LayerBase(QgsVectorLayer):
         # switch to read-only mode
         self.setReadOnly(True)
 
+        # release reader resources
+        reader.release()
+
     def _writeToOgrDataSource(self):
         filePath = Path(self._fileName).with_suffix('.' + self.storageFormat.lower())
         try:

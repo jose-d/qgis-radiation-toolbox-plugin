@@ -322,3 +322,6 @@ class SafecastLayerHelper(object):
         for rec in self._layer.reader:
             self._plot[0].append(rec["dist_cumulative"] / 1000) # km
             self._plot[1].append(rec["ader_microsvh"])
+
+        # release reader resources
+        self._layer.reader.release()
