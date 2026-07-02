@@ -1,6 +1,30 @@
-# Radiation ToolBox Plugin for QGIS 3.x
+# Radiation ToolBox Plugin for QGIS 4.x
 
 This plugin allows to easily load data from Safecast radiation monitoring devices (LOG file) like bGeigie Nano into QGIS as a new vector point layer. Experimental support for ERS 2.0 format (European Radiometric and Spectrometry format)(1) and some types of PicoEnvirotec PEI files (2). 
+
+## 2026-07-03 Update - QGIS 4 / Qt 6 packaging
+
+- Ported plugin imports from PyQt5-style APIs to QGIS version-independent `qgis.PyQt` imports for QGIS 4 / Qt 6 compatibility.
+- Plugin packaging is produced with `make package` as `radiation_toolbox_plugin.zip`.
+- Qt resources are built as a binary `resources.rcc` file using Qt 6 `rcc`; `resources.py` only registers that file through `qgis.PyQt.QtCore.QResource`.
+- The package vendors the pinned `radiation_toolbox_reader` dependency, so the zip can be installed directly from QGIS Plugin Manager using "Install from ZIP".
+- GitHub Actions build the zip on pushes, pull requests, tags, and manual release runs.
+
+### Build locally
+
+Install the build tools:
+
+```bash
+sudo apt-get install make python3-pip python3-sphinx qt6-base-dev-tools qt6-l10n-tools unzip zip
+```
+
+Build the installable plugin zip:
+
+```bash
+make package
+```
+
+The output is `radiation_toolbox_plugin.zip`. The build uses Qt 6 tools by default: `/usr/lib/qt6/libexec/rcc` for resources and `/usr/lib/qt6/bin/lrelease` for translations when available. Override them with `make RCC=/path/to/rcc LRELEASE=/path/to/lrelease package` if your distribution installs Qt tools elsewhere.
 
 
 ## 2024-03-04 Update - added new language files
@@ -56,6 +80,5 @@ Developed by OpenGeoLabs s.r.o for National Radiation Protection Institute (SURO
 (1) https://github.com/juhele/opengeodata/tree/master/ERS_-_European_Radiometric_and_Spectrometry_format
 
 (2) https://github.com/juhele/opengeodata/tree/master/Ground_radiation_monitoring_DEMO_data
-
 
 
