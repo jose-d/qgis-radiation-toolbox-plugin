@@ -42,6 +42,9 @@ SOURCES = \
 
 PLUGINNAME = radiation_toolbox_plugin
 PLUGIN_ZIP = $(PLUGINNAME).zip
+PACKAGE_BUILD_DIR = zip_build
+PACKAGE_PLUGIN_DIR = $(PACKAGE_BUILD_DIR)/$(PLUGINNAME)
+READER_PACKAGE = git+https://gitlab.com/opengeolabs/radiation-toolbox/radiation-toolbox-reader.git@master
 
 PY_FILES = \
 	__init__.py \
@@ -146,18 +149,24 @@ zip: deploy dclean
 	rm -f "$(PLUGIN_ZIP)"
 	cd "$(HOME)/$(QGISDIR)/python/plugins"; zip -9r "$(CURDIR)/$(PLUGIN_ZIP)" "$(PLUGINNAME)"
 
-package: compile
-	# Create a zip package of the plugin named $(PLUGINNAME).zip.
-	# This requires use of git (your plugin development directory must be a
-	# git repository).
-	# To use, pass a valid commit or tag as follows:
-	#   make package VERSION=Version_0.3.2
+package: compile doc transcompile
+	# Create a QGIS-installable zip package of the plugin.
 	@echo
 	@echo "------------------------------------"
-	@echo "Exporting plugin to zip package.	"
+	@echo "Building plugin zip package.	"
 	@echo "------------------------------------"
-	rm -f "$(PLUGIN_ZIP)"
-	git archive --prefix="$(PLUGINNAME)/" -o "$(PLUGIN_ZIP)" $(VERSION)
+	rm -rf "$(PACKAGE_BUILD_DIR)" "$(PLUGIN_ZIP)"
+	mkdir -p "$(PACKAGE_PLUGIN_DIR)"
+	cp -vf $(PY_FILES) "$(PACKAGE_PLUGIN_DIR)"
+	cp -vf $(UI_FILES) "$(PACKAGE_PLUGIN_DIR)"
+	cp -vf $(COMPILED_RESOURCE_FILES) "$(PACKAGE_PLUGIN_DIR)"
+	cp -vf $(EXTRAS) "$(PACKAGE_PLUGIN_DIR)"
+	for dir in $(EXTRA_DIRS); do cp -vfr "$$dir" "$(PACKAGE_PLUGIN_DIR)"; done
+	cp -vfr "$(HELP)" "$(PACKAGE_PLUGIN_DIR)/help"
+	python3 -m pip install --target "$(PACKAGE_PLUGIN_DIR)" --no-deps --no-compile "$(READER_PACKAGE)"
+	find "$(PACKAGE_PLUGIN_DIR)" -type d -name "__pycache__" -prune -exec rm -rf {} +
+	find "$(PACKAGE_PLUGIN_DIR)" -name "*.pyc" -delete
+	cd "$(PACKAGE_BUILD_DIR)"; zip -9r "$(CURDIR)/$(PLUGIN_ZIP)" "$(PLUGINNAME)"
 	echo "Created package: $(PLUGIN_ZIP)"
 
 upload: zip
