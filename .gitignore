@@ -4,6 +4,7 @@ help/build
 __pycache__/
 qgis-safecast-plugin.zip
 radiation_toolbox_plugin.zip
+resources.rcc
 qwt/
 zip_build/
 tests/data/sample.sqlite

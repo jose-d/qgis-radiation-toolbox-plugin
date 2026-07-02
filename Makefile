@@ -48,7 +48,8 @@ READER_PACKAGE = git+https://gitlab.com/opengeolabs/radiation-toolbox/radiation-
 
 PY_FILES = \
 	__init__.py \
-	radiation_toolbox.py radiation_toolbox_dockwidget.py
+	radiation_toolbox.py radiation_toolbox_dockwidget.py \
+	resources.py
 
 UI_FILES = radiation_toolbox_dockwidget_base.ui
 
@@ -56,7 +57,7 @@ EXTRAS = metadata.txt LICENSE
 
 EXTRA_DIRS = layer style tools i18n icons
 
-COMPILED_RESOURCE_FILES = resources.py
+COMPILED_RESOURCE_FILES = resources.rcc
 
 PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
 
@@ -70,6 +71,7 @@ HELP = help/build/html
 PLUGIN_UPLOAD = $(c)/plugin_upload.py
 
 RESOURCE_SRC=$(shell grep '^ *<file' resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
+RCC ?= $(shell command -v /usr/lib/qt6/libexec/rcc 2>/dev/null || command -v rcc 2>/dev/null)
 
 QGISDIR=.qgis2
 PLUGIN_DIR = $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
@@ -79,9 +81,8 @@ default: compile
 
 compile: $(COMPILED_RESOURCE_FILES)
 
-%.py : %.qrc $(RESOURCE_SRC)
-	pyrcc5 -o $*.py  $<
-	sed -i 's/from PyQt5 import QtCore/from qgis.PyQt import QtCore/' $*.py
+resources.rcc: resources.qrc $(RESOURCE_SRC)
+	"$(RCC)" --binary -o $@ $<
 
 %.qm : %.ts
 	$(LRELEASE) $<

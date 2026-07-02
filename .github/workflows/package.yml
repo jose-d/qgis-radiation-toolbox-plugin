@@ -31,9 +31,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             make \
-            pyqt5-dev-tools \
             python3-pip \
             python3-sphinx \
+            qt6-base-dev-tools \
             qttools5-dev-tools \
             unzip \
             zip
@@ -47,6 +47,7 @@ jobs:
           unzip -t radiation_toolbox_plugin.zip
           unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/radiation_toolbox.py'
           unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/resources.py'
+          unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/resources.rcc'
           unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/radiation_toolbox_reader/__init__.py'
           rm -rf /tmp/radiation_toolbox_plugin_check
           mkdir -p /tmp/radiation_toolbox_plugin_check
