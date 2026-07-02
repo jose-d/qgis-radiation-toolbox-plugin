@@ -34,7 +34,7 @@ Currently the RadiationToolbox contains these translations
 - implemented fix provided by Petr Klosko (Twitter: @pklosko) usable only in Windows OS (in linux the plot works without need to fix anything)
 - get the plugin from the fixed branch (Windows only, the fix causes errors in linux):
 
-https://gitlab.com/opengeolabs/radiation-toolbox/qgis-radiation-toolbox-plugin/-/tree/Windows_fix
+https://github.com/jose-d/qgis-radiation-toolbox-plugin/tree/Windows_fix
 
 
 Features:
@@ -56,7 +56,6 @@ Developed by OpenGeoLabs s.r.o for National Radiation Protection Institute (SURO
 (1) https://github.com/juhele/opengeodata/tree/master/ERS_-_European_Radiometric_and_Spectrometry_format
 
 (2) https://github.com/juhele/opengeodata/tree/master/Ground_radiation_monitoring_DEMO_data
-
 
 
 

@@ -1,0 +1,126 @@
+name: Publish release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Release tag, for example v2.1.0-qgis4
+        required: true
+        type: string
+      release_name:
+        description: Release title. Defaults to the tag when empty.
+        required: false
+        type: string
+      target_ref:
+        description: Branch, tag, or SHA to build. Defaults to the workflow ref.
+        required: false
+        type: string
+      prerelease:
+        description: Mark release as a prerelease
+        required: true
+        default: true
+        type: boolean
+      draft:
+        description: Create or update as a draft release
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish release zip
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            make \
+            pyqt5-dev-tools \
+            python3-pip \
+            python3-sphinx \
+            qttools5-dev-tools \
+            unzip \
+            zip
+
+      - name: Build plugin package
+        run: make package
+
+      - name: Validate package contents
+        run: |
+          test -f radiation_toolbox_plugin.zip
+          unzip -t radiation_toolbox_plugin.zip
+          unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/radiation_toolbox.py'
+          unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/resources.py'
+          unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/radiation_toolbox_reader/__init__.py'
+          rm -rf /tmp/radiation_toolbox_plugin_check
+          mkdir -p /tmp/radiation_toolbox_plugin_check
+          unzip -q radiation_toolbox_plugin.zip -d /tmp/radiation_toolbox_plugin_check
+          ! grep -R -n -E 'from PyQt5|import PyQt5|Qt5Agg|backend_qt5agg|Qt\.LeftDockWidgetArea' \
+            /tmp/radiation_toolbox_plugin_check/radiation_toolbox_plugin
+
+      - name: Prepare release metadata
+        id: release_meta
+        run: |
+          release_name="${{ inputs.release_name }}"
+          if [ -z "$release_name" ]; then
+            release_name="${{ inputs.tag_name }}"
+          fi
+          echo "release_name=$release_name" >> "$GITHUB_OUTPUT"
+
+          notes_file="$(mktemp)"
+          {
+            echo "Installable QGIS plugin package."
+            echo
+            echo "Built from commit \`${GITHUB_SHA}\`."
+            echo
+            echo "Install in QGIS via:"
+            echo
+            echo "Plugins -> Manage and Install Plugins -> Install from ZIP"
+          } > "$notes_file"
+          echo "notes_file=$notes_file" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ inputs.tag_name }}
+          RELEASE_NAME: ${{ steps.release_meta.outputs.release_name }}
+          NOTES_FILE: ${{ steps.release_meta.outputs.notes_file }}
+          IS_PRERELEASE: ${{ inputs.prerelease }}
+          IS_DRAFT: ${{ inputs.draft }}
+        run: |
+          flags=()
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            flags+=(--prerelease)
+          fi
+          if [ "$IS_DRAFT" = "true" ]; then
+            flags+=(--draft)
+          fi
+
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release edit "$TAG_NAME" \
+              --title "$RELEASE_NAME" \
+              --notes-file "$NOTES_FILE" \
+              "${flags[@]}"
+            gh release upload "$TAG_NAME" radiation_toolbox_plugin.zip --clobber
+          else
+            gh release create "$TAG_NAME" radiation_toolbox_plugin.zip \
+              --target "$GITHUB_SHA" \
+              --title "$RELEASE_NAME" \
+              --notes-file "$NOTES_FILE" \
+              "${flags[@]}"
+          fi
