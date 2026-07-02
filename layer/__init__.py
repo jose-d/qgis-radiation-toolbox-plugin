@@ -7,9 +7,9 @@ import copy
 from enum import Enum
 from pathlib import Path
 
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QVariant
-from PyQt5.QtGui import QColor
+from qgis.PyQt import QtWidgets
+from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtGui import QColor
 
 from qgis.utils import iface, Qgis
 from qgis.core import QgsVectorLayer, QgsVectorFileWriter, QgsMessageLog, QgsField, QgsGraduatedSymbolRenderer, QgsSymbol

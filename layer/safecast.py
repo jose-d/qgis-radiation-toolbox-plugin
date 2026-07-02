@@ -24,7 +24,7 @@ import time
 from datetime import datetime, timedelta, date
 from dateutil import tz
 
-from PyQt5.QtWidgets import QProgressBar
+from qgis.PyQt.QtWidgets import QProgressBar
 
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, \
     QgsGeometry, QgsPointXY, QgsFields, \

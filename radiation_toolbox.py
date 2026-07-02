@@ -23,14 +23,19 @@
 """
 import os.path
 
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from qgis.PyQt.QtGui import QIcon
+try:
+    from qgis.PyQt.QtGui import QAction
+except ImportError:
+    from qgis.PyQt.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 
 # Import the code for the DockWidget
 from .radiation_toolbox_dockwidget import RadiationToolboxDockWidget
+
+QT_DOCK_WIDGET_AREA = getattr(Qt, "DockWidgetArea", Qt)
 
 class RadiationToolbox:
     """QGIS Plugin Implementation."""
@@ -223,5 +228,5 @@ class RadiationToolbox:
 
             # show the dockwidget
             # TODO: fix to allow choice of dock location
-            self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
+            self.iface.addDockWidget(QT_DOCK_WIDGET_AREA.LeftDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
