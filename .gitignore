@@ -3,6 +3,7 @@ help/build
 *.bak
 __pycache__/
 qgis-safecast-plugin.zip
+radiation_toolbox_plugin.zip
 qwt/
 zip_build/
 tests/data/sample.sqlite
