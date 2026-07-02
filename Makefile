@@ -73,7 +73,8 @@ RCC ?= $(shell command -v /usr/lib/qt6/libexec/rcc 2>/dev/null || command -v rcc
 
 QGISDIR=.qgis2
 PLUGIN_DIR = $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-VERSION ?= HEAD
+VERSION ?= $(shell git describe --tags --exact-match 2>/dev/null || sed -n 's/^version=//p' metadata.txt)
+PACKAGE_VERSION = $(patsubst v%,%,$(VERSION))
 
 default: compile
 
@@ -160,12 +161,14 @@ package: compile doc transcompile
 	cp -vf $(UI_FILES) "$(PACKAGE_PLUGIN_DIR)"
 	cp -vf $(COMPILED_RESOURCE_FILES) "$(PACKAGE_PLUGIN_DIR)"
 	cp -vf $(EXTRAS) "$(PACKAGE_PLUGIN_DIR)"
+	sed -i 's/^version=.*/version=$(PACKAGE_VERSION)/' "$(PACKAGE_PLUGIN_DIR)/metadata.txt"
 	for dir in $(EXTRA_DIRS); do cp -vfr "$$dir" "$(PACKAGE_PLUGIN_DIR)"; done
 	cp -vfr "$(HELP)" "$(PACKAGE_PLUGIN_DIR)/help"
 	python3 -m pip install --target "$(PACKAGE_PLUGIN_DIR)" --no-deps --no-compile "$(READER_PACKAGE)"
 	find "$(PACKAGE_PLUGIN_DIR)" -type d -name "__pycache__" -prune -exec rm -rf {} +
 	find "$(PACKAGE_PLUGIN_DIR)" -name "*.pyc" -delete
 	cd "$(PACKAGE_BUILD_DIR)"; zip -9r "$(CURDIR)/$(PLUGIN_ZIP)" "$(PLUGINNAME)"
+	echo "Packaged plugin version: $(PACKAGE_VERSION)"
 	echo "Created package: $(PLUGIN_ZIP)"
 
 upload: zip

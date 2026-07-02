@@ -28,6 +28,8 @@ make package
 
 The output is `radiation_toolbox_plugin.zip`. The build uses Qt 6 tools by default: `/usr/lib/qt6/libexec/rcc` for resources and `/usr/lib/qt6/bin/lrelease` for translations when available. Override them with `make RCC=/path/to/rcc LRELEASE=/path/to/lrelease package` if your distribution installs Qt tools elsewhere.
 
+The packaged plugin version is generated from the Git tag when the build runs on a tag, with a leading `v` stripped for QGIS metadata. For example, `v2.1.0-qgis4` becomes `version=2.1.0-qgis4` in the zip. For manual local builds, use `make package VERSION=v2.1.0-qgis4` to force the same behavior.
+
 
 ## 2024-03-04 Update - added new language files
 
@@ -82,4 +84,3 @@ Developed by OpenGeoLabs s.r.o for National Radiation Protection Institute (SURO
 (1) https://github.com/juhele/opengeodata/tree/master/ERS_-_European_Radiometric_and_Spectrometry_format
 
 (2) https://github.com/juhele/opengeodata/tree/master/Ground_radiation_monitoring_DEMO_data
-

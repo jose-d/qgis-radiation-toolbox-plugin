@@ -58,7 +58,7 @@ jobs:
             zip
 
       - name: Build plugin package
-        run: make package
+        run: make package VERSION="${{ inputs.tag_name }}"
 
       - name: Validate package contents
         run: |
@@ -68,6 +68,9 @@ jobs:
           unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/resources.py'
           unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/resources.rcc'
           unzip -l radiation_toolbox_plugin.zip | grep 'radiation_toolbox_plugin/radiation_toolbox_reader/__init__.py'
+          expected_version="${{ inputs.tag_name }}"
+          expected_version="${expected_version#v}"
+          unzip -p radiation_toolbox_plugin.zip radiation_toolbox_plugin/metadata.txt | grep "^version=${expected_version}$"
           rm -rf /tmp/radiation_toolbox_plugin_check
           mkdir -p /tmp/radiation_toolbox_plugin_check
           unzip -q radiation_toolbox_plugin.zip -d /tmp/radiation_toolbox_plugin_check
