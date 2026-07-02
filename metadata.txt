@@ -1,20 +1,20 @@
 [general]
-name=Radiation ToolBox Plugin
-qgisMinimumVersion=3.16
+name=Radiation ToolBox Plugin (Unofficial QGIS 4 Fork)
+qgisMinimumVersion=4.0
 qgisMaximumVersion=4.99
-description=Plugin for loading data from Safecast and other radiation monitoring devices
-version=2.1dev
-author=OpenGeoLabs s.r.o.
-email=info@opengeolabs.cz
+description=Unofficial QGIS 4 / Qt 6 fork for loading data from Safecast and other radiation monitoring devices
+version=2.1.dev0+qgis4
+author=OpenGeoLabs s.r.o.; QGIS 4 fork maintained by jose-d
+email=
 
-about=This plugin allows to easily load data from Safecast radiation monitoring devices (LOG file) like bGeigie Nano into QGIS as a new vector point layer. Experimental support for ERS 2.0 format (European Radiometric and Spectrometry format) and some types of PicoEnvirotec PEI files. Developed by OpenGeoLabs s.r.o for National Radiation Protection Institute (SURO), Prague, Czech Republic (SURO).
+about=Unofficial QGIS 4 / Qt 6 compatibility fork of the Radiation ToolBox Plugin. This fork is not an official OpenGeoLabs or SURO release; use the repository links below for issues and source code. The original plugin was developed by OpenGeoLabs s.r.o. for the National Radiation Protection Institute (SURO), Prague, Czech Republic. It loads data from Safecast radiation monitoring devices (LOG file), including bGeigie Nano, into QGIS as a vector point layer, with experimental support for ERS 2.0 and selected PicoEnvirotec PEI files.
 
 tracker=https://github.com/jose-d/qgis-radiation-toolbox-plugin/issues
 repository=https://github.com/jose-d/qgis-radiation-toolbox-plugin
 
 tags=vector,radiation,safecast,radioactivity,nuclear
 
-homepage=https://opengeolabs.gitlab.io/radiation-toolbox/qgis-radiation-toolbox-plugin/
+homepage=https://github.com/jose-d/qgis-radiation-toolbox-plugin
 category=Plugins
 icon=icons/radiation_toolbox_icon.png
 experimental=True

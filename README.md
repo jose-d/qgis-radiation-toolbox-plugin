@@ -2,6 +2,8 @@
 
 This plugin allows to easily load data from Safecast radiation monitoring devices (LOG file) like bGeigie Nano into QGIS as a new vector point layer. Experimental support for ERS 2.0 format (European Radiometric and Spectrometry format)(1) and some types of PicoEnvirotec PEI files (2). 
 
+This repository is an unofficial QGIS 4 / Qt 6 compatibility fork. It is not an official OpenGeoLabs or SURO release. Upstream authorship and project history are preserved below; issues and releases for this fork are managed in this GitHub repository.
+
 ## 2026-07-03 Update - QGIS 4 / Qt 6 packaging
 
 - Ported plugin imports from PyQt5-style APIs to QGIS version-independent `qgis.PyQt` imports for QGIS 4 / Qt 6 compatibility.
@@ -80,5 +82,4 @@ Developed by OpenGeoLabs s.r.o for National Radiation Protection Institute (SURO
 (1) https://github.com/juhele/opengeodata/tree/master/ERS_-_European_Radiometric_and_Spectrometry_format
 
 (2) https://github.com/juhele/opengeodata/tree/master/Ground_radiation_monitoring_DEMO_data
-
 
