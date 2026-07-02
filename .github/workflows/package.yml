@@ -34,7 +34,7 @@ jobs:
             python3-pip \
             python3-sphinx \
             qt6-base-dev-tools \
-            qttools5-dev-tools \
+            qt6-l10n-tools \
             unzip \
             zip
 
