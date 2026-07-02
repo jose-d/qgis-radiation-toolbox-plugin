@@ -41,6 +41,10 @@ from .tools.stats.safecast import SafecastStats
 from .layer import LayerType
 from .style import StyleError
 
+QSIZE_POLICY = getattr(QtWidgets.QSizePolicy, "Policy", QtWidgets.QSizePolicy)
+QFILE_DIALOG_OPTION = getattr(QtWidgets.QFileDialog, "Option", QtWidgets.QFileDialog)
+QMESSAGE_BOX_BUTTON = getattr(QtWidgets.QMessageBox, "StandardButton", QtWidgets.QMessageBox)
+
 try:
     from .tools.plot.safecast import MplCanvas
     plotMsg = None
@@ -95,6 +99,8 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self._loadSettings()
 
         # initialize internal variables
+        self._statsVisible = False
+        self._plotVisible = False
         self._initStats()
         self._initPlot()
         self._initMaps()
@@ -202,7 +208,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             )
             self._statsLabel.setWordWrap(True)
             self._statsSpacer = QtWidgets.QSpacerItem(
-                20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+                20, 40, QSIZE_POLICY.Minimum, QSIZE_POLICY.Expanding
             )
 
             self._statsLayout.addWidget(self._statsLabel)
@@ -211,7 +217,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self._statsVisible = False
             return # initialization done
 
-        if statsWidget and not self._statsVisible:
+        if statsWidget and not getattr(self, "_statsVisible", False):
             # remove info label & spacer from layout
             self._statsLabel.setVisible(False)
             self._statsLayout.removeWidget(self._statsLabel)
@@ -223,10 +229,10 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             self.groupStats.adjustSize()
 
-        elif not statsWidget and self._statsVisible:
+        elif not statsWidget and getattr(self, "_statsVisible", False):
             # remove plot widget from layout
             self._statsWidget.setVisible(False)
-            self._plotLayout.removeWidget(self._statsWidget)
+            self._statsLayout.removeWidget(self._statsWidget)
             self._statsVisible = False
             # add info label & spacer into layout
             self._statsLabel.setVisible(True)
@@ -256,7 +262,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 if not plotMsg else plotMsg, self.groupPlot)
             self._plotLabel.setWordWrap(True)
             self._plotSpacer = QtWidgets.QSpacerItem(
-                20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+                20, 40, QSIZE_POLICY.Minimum, QSIZE_POLICY.Expanding
             )
 
             self._plotLayout.addWidget(self._plotLabel)
@@ -264,7 +270,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self._plotVisible = False
             return # initialization done
 
-        if plotWidget and not self._plotVisible:
+        if plotWidget and not getattr(self, "_plotVisible", False):
             # remove info label & spacer from layout
             self._plotLabel.setVisible(False)
             self._plotLayout.removeWidget(self._plotLabel)
@@ -276,10 +282,10 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             self.groupPlot.adjustSize()
 
-        elif not plotWidget and self._plotVisible:
+        elif not plotWidget and getattr(self, "_plotVisible", False):
             # remove plot widget from layout
             self._plotWidget.setVisible(False)
-            self._plotLayout.removeWidget(self._plotLabel)
+            self._plotLayout.removeWidget(self._plotWidget)
             self._plotVisible = False
             # add info label & spacer into layout
             self._plotLabel.setVisible(True)
@@ -466,7 +472,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             QtWidgets.QMessageBox.critical(
                 None, self.tr("Error"),
                 self.tr("Failed to apply style: {0}").format(e),
-                QtWidgets.QMessageBox.Abort
+                QMESSAGE_BOX_BUTTON.Abort
             )
 
         node = QgsProject.instance().layerTreeRoot().findLayer(layer.id())
@@ -491,7 +497,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             QtWidgets.QMessageBox.critical(
                 None, self.tr("Error"),
                 self.tr("Invalid Safecast layer"),
-                QtWidgets.QMessageBox.Abort
+                QMESSAGE_BOX_BUTTON.Abort
             )
 
         # overwrite check disabled because of possible missing file extension
@@ -502,7 +508,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 helper.filename() + '_mod.LOG'
             ),
             self.tr("LOG file (*.LOG)"),
-            options=QtWidgets.QFileDialog.DontConfirmOverwrite
+            options=QFILE_DIALOG_OPTION.DontConfirmOverwrite
         )
         if not filePath:
             # action canceled
@@ -518,8 +524,8 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 self, self.tr("Overwrite?"),
                 self.tr("File {} already exists. "
                         "Do you want to overwrite it?.").format(filePath),
-                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-            if reply != QtWidgets.QMessageBox.Yes:
+                QMESSAGE_BOX_BUTTON.Yes, QMESSAGE_BOX_BUTTON.No)
+            if reply != QMESSAGE_BOX_BUTTON.Yes:
                 return
 
         if layer:
@@ -531,7 +537,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 QtWidgets.QMessageBox.critical(
                     None, self.tr("Error"),
                     self.tr("Failed to save LOG file: {0}").format(e),
-                    QtWidgets.QMessageBox.Abort
+                    QMESSAGE_BOX_BUTTON.Abort
                 )
 
     def onSelect(self):
@@ -577,9 +583,9 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 self, self.tr("Delete?"),
                 self.tr("Do you want to delete {} selected features? "
                         "This operation cannot be reverted.").format(count),
-                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                QMESSAGE_BOX_BUTTON.Yes, QMESSAGE_BOX_BUTTON.No)
 
-            if reply == QtWidgets.QMessageBox.Yes:
+            if reply == QMESSAGE_BOX_BUTTON.Yes:
                 # delete selected features from currently selected layer
                 # iface.messageBar().pushMessage(
                 #     self.tr("Info"),

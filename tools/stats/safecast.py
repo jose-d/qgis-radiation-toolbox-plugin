@@ -1,9 +1,13 @@
 from qgis.PyQt.QtWidgets import QTreeWidget, QTreeWidgetItem
 
+QTREE_CHILD_INDICATOR_POLICY = getattr(
+    QTreeWidgetItem, "ChildIndicatorPolicy", QTreeWidgetItem
+)
+
 class SafecastStats(QTreeWidget):
     def addParent(self, parent, title):
         item = QTreeWidgetItem(parent, [title])
-        item.setChildIndicatorPolicy(QTreeWidgetItem.ShowIndicator)
+        item.setChildIndicatorPolicy(QTREE_CHILD_INDICATOR_POLICY.ShowIndicator)
         item.setExpanded(True)
         return item
     

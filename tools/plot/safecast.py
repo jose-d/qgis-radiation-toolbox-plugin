@@ -18,12 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt import Qt
-
 import matplotlib
-matplotlib.use('Qt5Agg')
+matplotlib.use('QtAgg')
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 
@@ -178,4 +176,3 @@ class MplCanvas(FigureCanvasQTAgg):
         self.axes.set_ylim(self.cur_ylim)
 
         self.draw()
-

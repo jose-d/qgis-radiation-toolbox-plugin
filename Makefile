@@ -40,7 +40,8 @@ SOURCES = \
 	__init__.py \
 	radiation_toolbox.py radiation_toolbox_dockwidget.py
 
-PLUGINNAME = Radiation Toolbox
+PLUGINNAME = radiation_toolbox_plugin
+PLUGIN_ZIP = $(PLUGINNAME).zip
 
 PY_FILES = \
 	__init__.py \
@@ -48,9 +49,9 @@ PY_FILES = \
 
 UI_FILES = radiation_toolbox_dockwidget_base.ui
 
-EXTRAS = metadata.txt icon.png
+EXTRAS = metadata.txt LICENSE
 
-EXTRA_DIRS =
+EXTRA_DIRS = layer style tools i18n icons
 
 COMPILED_RESOURCE_FILES = resources.py
 
@@ -68,13 +69,16 @@ PLUGIN_UPLOAD = $(c)/plugin_upload.py
 RESOURCE_SRC=$(shell grep '^ *<file' resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
 
 QGISDIR=.qgis2
+PLUGIN_DIR = $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+VERSION ?= HEAD
 
 default: compile
 
 compile: $(COMPILED_RESOURCE_FILES)
 
-%.py : %.qrc $(RESOURCES_SRC)
+%.py : %.qrc $(RESOURCE_SRC)
 	pyrcc5 -o $*.py  $<
+	sed -i 's/from PyQt5 import QtCore/from qgis.PyQt import QtCore/' $*.py
 
 %.qm : %.ts
 	$(LRELEASE) $<
@@ -105,15 +109,13 @@ deploy: compile doc transcompile
 	# The deploy  target only works on unix like operating system where
 	# the Python plugin directory is located at:
 	# $HOME/$(QGISDIR)/python/plugins
-	mkdir -p $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(PY_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
-	# Copy extra directories if any
-	(foreach EXTRA_DIR,(EXTRA_DIRS), cp -R (EXTRA_DIR) (HOME)/(QGISDIR)/python/plugins/(PLUGINNAME)/;)
+	mkdir -p "$(PLUGIN_DIR)"
+	cp -vf $(PY_FILES) "$(PLUGIN_DIR)"
+	cp -vf $(UI_FILES) "$(PLUGIN_DIR)"
+	cp -vf $(COMPILED_RESOURCE_FILES) "$(PLUGIN_DIR)"
+	cp -vf $(EXTRAS) "$(PLUGIN_DIR)"
+	for dir in $(EXTRA_DIRS); do cp -vfr "$$dir" "$(PLUGIN_DIR)"; done
+	cp -vfr "$(HELP)" "$(PLUGIN_DIR)/help"
 
 
 # The dclean target removes compiled python files from plugin directory
@@ -123,8 +125,8 @@ dclean:
 	@echo "-----------------------------------"
 	@echo "Removing any compiled python files."
 	@echo "-----------------------------------"
-	find $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME) -iname "*.pyc" -delete
-	find $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME) -iname ".git" -prune -exec rm -Rf {} \;
+	find "$(PLUGIN_DIR)" -iname "*.pyc" -delete
+	find "$(PLUGIN_DIR)" -iname ".git" -prune -exec rm -Rf {} \;
 
 
 derase:
@@ -132,7 +134,7 @@ derase:
 	@echo "-------------------------"
 	@echo "Removing deployed plugin."
 	@echo "-------------------------"
-	rm -Rf $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	rm -Rf "$(PLUGIN_DIR)"
 
 zip: deploy dclean
 	@echo
@@ -141,8 +143,8 @@ zip: deploy dclean
 	@echo "---------------------------"
 	# The zip target deploys the plugin and creates a zip file with the deployed
 	# content. You can then upload the zip file on http://plugins.qgis.org
-	rm -f $(PLUGINNAME).zip
-	cd $(HOME)/$(QGISDIR)/python/plugins; zip -9r $(CURDIR)/$(PLUGINNAME).zip $(PLUGINNAME)
+	rm -f "$(PLUGIN_ZIP)"
+	cd "$(HOME)/$(QGISDIR)/python/plugins"; zip -9r "$(CURDIR)/$(PLUGIN_ZIP)" "$(PLUGINNAME)"
 
 package: compile
 	# Create a zip package of the plugin named $(PLUGINNAME).zip.
@@ -154,16 +156,16 @@ package: compile
 	@echo "------------------------------------"
 	@echo "Exporting plugin to zip package.	"
 	@echo "------------------------------------"
-	rm -f $(PLUGINNAME).zip
-	git archive --prefix=$(PLUGINNAME)/ -o $(PLUGINNAME).zip $(VERSION)
-	echo "Created package: $(PLUGINNAME).zip"
+	rm -f "$(PLUGIN_ZIP)"
+	git archive --prefix="$(PLUGINNAME)/" -o "$(PLUGIN_ZIP)" $(VERSION)
+	echo "Created package: $(PLUGIN_ZIP)"
 
 upload: zip
 	@echo
 	@echo "-------------------------------------"
 	@echo "Uploading plugin to QGIS Plugin repo."
 	@echo "-------------------------------------"
-	$(PLUGIN_UPLOAD) $(PLUGINNAME).zip
+	$(PLUGIN_UPLOAD) "$(PLUGIN_ZIP)"
 
 transup:
 	@echo
