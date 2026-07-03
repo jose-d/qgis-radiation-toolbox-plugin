@@ -1,2 +1,2 @@
-git+https://gitlab.com/opengeolabs/radiation-toolbox/radiation-toolbox-reader.git@ec322170b87a26d2cab1e4666b3277c621b92605
+git+https://github.com/jose-d/radiation-toolbox-reader.git@a897a69524b4c0a0b98717210ca61bd123524b0b
 gdal==3.10.3

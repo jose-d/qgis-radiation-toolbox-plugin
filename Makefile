@@ -42,7 +42,7 @@ PLUGINNAME = radiation_toolbox_plugin
 PLUGIN_ZIP = $(PLUGINNAME).zip
 PACKAGE_BUILD_DIR = zip_build
 PACKAGE_PLUGIN_DIR = $(PACKAGE_BUILD_DIR)/$(PLUGINNAME)
-READER_PACKAGE = git+https://gitlab.com/opengeolabs/radiation-toolbox/radiation-toolbox-reader.git@ec322170b87a26d2cab1e4666b3277c621b92605
+READER_PACKAGE = git+https://github.com/jose-d/radiation-toolbox-reader.git@a897a69524b4c0a0b98717210ca61bd123524b0b
 
 PY_FILES = \
 	__init__.py \
