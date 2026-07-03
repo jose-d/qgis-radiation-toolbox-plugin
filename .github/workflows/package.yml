@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -64,7 +64,7 @@ jobs:
             /tmp/radiation_toolbox_plugin_check/radiation_toolbox_plugin
 
       - name: Upload package artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: radiation_toolbox_plugin
           path: radiation_toolbox_plugin.zip
@@ -73,6 +73,6 @@ jobs:
 
       - name: Attach package to GitHub release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: radiation_toolbox_plugin.zip
