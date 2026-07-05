@@ -189,7 +189,7 @@ class SafecastLayerHelper(object):
         metadata = {}
         try:
             ds = ogr.Open(self._fileName)
-            layer = ds.GetLayerByName('safecast_metadata')
+            layer = ds.GetLayerByName('reader_metadata')
             if layer:
                 layer_defn = layer.GetLayerDefn()
                 layer.ResetReading()
@@ -205,6 +205,11 @@ class SafecastLayerHelper(object):
             )
 
         return metadata
+
+    def _getLogHeaderMetadata(self):
+        """Get LOG header values from reader metadata."""
+        metadata = self._getMetadata()
+        return metadata['format_version'], metadata['deadtime']
         
     def save(self, filePath):
         """Save layer to a new LOG file.
@@ -221,9 +226,9 @@ class SafecastLayerHelper(object):
         try:
             with open(filePath, 'w', newline='\r\n') as f:
                 f.write('# NEW LOG\n')
-                metadata = self._getMetadata()
-                f.write('# format={}\n'.format(metadata['columns']['format']))
-                f.write('# deadtime={}\n'.format(metadata['columns']['deadtime']))
+                format_version, deadtime = self._getLogHeaderMetadata()
+                f.write('# format={}\n'.format(format_version))
+                f.write('# deadtime={}\n'.format(deadtime))
                 features = self._layer.getFeatures()
                 for feat in features:
                     attrs = feat.attributeMap()
@@ -234,7 +239,7 @@ class SafecastLayerHelper(object):
                     # join two last columns(hdop+checksum)
                     checksum = self._gpsChecksum(record[1:]) # skip '$'
                     f.write(record + f'*{checksum}\n')
-        except IOError as e:
+        except (IOError, KeyError, TypeError, IndexError) as e:
             raise SafecastWriterError(e)
 
     def _updateStats(self, data=None):
