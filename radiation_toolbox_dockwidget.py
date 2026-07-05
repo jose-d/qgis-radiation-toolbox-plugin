@@ -35,6 +35,7 @@ from qgis.utils import iface, Qgis
 from osgeo import ogr
 
 from .radiation_toolbox_reader.logger import ReaderLogger
+from .radiation_toolbox_reader.exceptions import ReaderError
 
 from .layer.exceptions import LoadError
 from .tools.stats.safecast import SafecastStats
@@ -372,42 +373,42 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         fileExt = os.path.splitext(filePath)[1][1:].lower() # remove '.'
         helper = None
 
-        if fileExt == 'log':
-            from .radiation_toolbox_reader import ComputedAttributes
-            from .radiation_toolbox_reader.safecast import SafecastReader
-            from .layer.safecast import SafecastLayer, SafecastLayerHelper
-
-            # create reader for input data
-            reader = SafecastReader(filePath, computed_attributes=ComputedAttributes.All)
-            # create new QGIS map layer (read-only)
-            layer = SafecastLayer(filePath, storageFormat)
-            # register new layer in plugin's internal list
-            # helper must be assigned before loading data (!)
-            self._layers[layer.id()] = helper = SafecastLayerHelper(layer)
-        elif fileExt == 'ers':
-            from .radiation_toolbox_reader.ers import ERSReader
-            from .layer.ers import ERSLayer
-
-            # create reader for input data
-            reader = ERSReader(filePath)
-            # create new QGIS map layer (read-only)
-            layer = ERSLayer(filePath, storageFormat)
-        elif fileExt in ('pei', 'p46'):
-            from .radiation_toolbox_reader.pei import PEIReader
-            from .layer.pei import PEILayer
-
-            # create reader for input data
-            reader = PEIReader(filePath)
-            # create new QGIS map layer (read-only)
-            layer = PEILayer(filePath, storageFormat)
-            fileExt = 'pei' # do not store p46 in settings
-        else:
-            iface.messageBar().pushMessage(self.tr("Critical"),
-                                           self.tr("Unsupported file extension {}").format(fileExt),
-                                           level=Qgis.Critical, duration=10)
-            return
-
         try:
+            if fileExt == 'log':
+                from .radiation_toolbox_reader import ComputedAttributes
+                from .radiation_toolbox_reader.safecast import SafecastReader
+                from .layer.safecast import SafecastLayer, SafecastLayerHelper
+
+                # create reader for input data
+                reader = SafecastReader(filePath, computed_attributes=ComputedAttributes.All)
+                # create new QGIS map layer (read-only)
+                layer = SafecastLayer(filePath, storageFormat)
+                # register new layer in plugin's internal list
+                # helper must be assigned before loading data (!)
+                self._layers[layer.id()] = helper = SafecastLayerHelper(layer)
+            elif fileExt == 'ers':
+                from .radiation_toolbox_reader.ers import ERSReader
+                from .layer.ers import ERSLayer
+
+                # create reader for input data
+                reader = ERSReader(filePath)
+                # create new QGIS map layer (read-only)
+                layer = ERSLayer(filePath, storageFormat)
+            elif fileExt in ('pei', 'p46'):
+                from .radiation_toolbox_reader.pei import PEIReader
+                from .layer.pei import PEILayer
+
+                # create reader for input data
+                reader = PEIReader(filePath)
+                # create new QGIS map layer (read-only)
+                layer = PEILayer(filePath, storageFormat)
+                fileExt = 'pei' # do not store p46 in settings
+            else:
+                iface.messageBar().pushMessage(self.tr("Critical"),
+                                               self.tr("Unsupported file extension {}").format(fileExt),
+                                               level=Qgis.Critical, duration=10)
+                return
+
             # load data by reader into new layer
             layer.load(reader)
             if helper:
@@ -417,7 +418,7 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self._initStyles(layer)
             layer.setStyle(self.styleBox.currentIndex())
             layer.setAliases() # loadNameStyle removes aliases (why?)
-        except (RadiationToolboxError, LoadError, StyleError) as e:
+        except (ReaderError, RadiationToolboxError, LoadError, StyleError) as e:
             # show error message on failure
             iface.messageBar().clearWidgets()
             iface.messageBar().pushMessage(self.tr("Critical"),
@@ -781,7 +782,10 @@ class RadiationToolboxDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             filePath = layer.dataProvider().dataSourceUri().split('|')[0]
             ds = ogr.Open(filePath)
-            layer = ds.GetLayerByName('safecast_metadata') is not None
+            layer = (
+                ds.GetLayerByName('reader_metadata') is not None or
+                ds.GetLayerByName('safecast_metadata') is not None
+            )
             ds = None
             if layer:
                 return LayerType.Safecast
